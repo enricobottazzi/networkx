@@ -102,7 +102,7 @@ def min_cost_flow_cost(G, demand="demand", capacity="capacity", weight="weight")
 @nx._dispatchable(
     node_attrs="demand", edge_attrs={"capacity": float("inf"), "weight": 0}
 )
-def min_cost_flow(G, demand="demand", capacity="capacity", weight="weight"):
+def min_cost_flow(G, demand="demand", capacity="capacity", weight="weight", max_iter=None):
     r"""Returns a minimum cost flow satisfying all demands in digraph G.
 
     G is a digraph with edge costs and capacities and in which nodes
@@ -137,6 +137,10 @@ def min_cost_flow(G, demand="demand", capacity="capacity", weight="weight"):
         that indicates the cost incurred by sending one unit of flow on
         that edge. If not present, the weight is considered to be 0.
         Default value: 'weight'.
+
+    max_iter : int, optional
+        Maximum number of pivot iterations to perform in the network simplex
+        algorithm. If None, the algorithm runs until convergence. Default: None.
 
     Returns
     -------
@@ -189,7 +193,7 @@ def min_cost_flow(G, demand="demand", capacity="capacity", weight="weight"):
     >>> flowDict
     {'a': {'b': 4, 'c': 1}, 'd': {}, 'b': {'d': 4}, 'c': {'d': 1}}
     """
-    return nx.network_simplex(G, demand=demand, capacity=capacity, weight=weight)[1]
+    return nx.network_simplex(G, demand=demand, capacity=capacity, weight=weight, max_iter=max_iter)[1]
 
 
 @nx._dispatchable(edge_attrs={"weight": 0})

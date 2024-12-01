@@ -329,7 +329,7 @@ class _DataEssentialsAndFunctions:
 @nx._dispatchable(
     node_attrs="demand", edge_attrs={"capacity": float("inf"), "weight": 0}
 )
-def network_simplex(G, demand="demand", capacity="capacity", weight="weight"):
+def network_simplex(G, demand="demand", capacity="capacity", weight="weight", max_iter=None):
     r"""Find a minimum cost flow satisfying all demands in digraph G.
 
     This is a primal network simplex algorithm that uses the leaving
@@ -367,6 +367,10 @@ def network_simplex(G, demand="demand", capacity="capacity", weight="weight"):
         that indicates the cost incurred by sending one unit of flow on
         that edge. If not present, the weight is considered to be 0.
         Default value: 'weight'.
+
+    max_iter : int, optional
+        Maximum number of pivot iterations to perform. If None, the algorithm
+        runs until convergence. Default: None.
 
     Returns
     -------
@@ -584,7 +588,11 @@ def network_simplex(G, demand="demand", capacity="capacity", weight="weight"):
     # Pivot loop
     ###########################################################################
 
+    iterations = 0
     for i, p, q in DEAF.find_entering_edges():
+        if max_iter is not None and iterations >= max_iter:
+            break
+            
         Wn, We = DEAF.find_cycle(i, p, q)
         j, s, t = DEAF.find_leaving_edge(Wn, We)
         DEAF.augment_flow(Wn, We, DEAF.residual_capacity(j, s))
@@ -600,6 +608,8 @@ def network_simplex(G, demand="demand", capacity="capacity", weight="weight"):
             DEAF.make_root(q)
             DEAF.add_edge(i, p, q)
             DEAF.update_potentials(i, p, q)
+        
+        iterations += 1
 
     ###########################################################################
     # Infeasibility and unboundedness detection
