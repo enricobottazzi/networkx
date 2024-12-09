@@ -673,4 +673,4 @@ def network_simplex(G, demand="demand", capacity="capacity", weight="weight", ma
                 flow_cost += w * c
                 add_entry(e[:-1] + (c,))
 
-    return flow_cost, flow_dict
+    return flow_cost, flow_dict, iterations

@@ -147,6 +147,8 @@ def min_cost_flow(G, demand="demand", capacity="capacity", weight="weight", max_
     flowDict : dictionary
         Dictionary of dictionaries keyed by nodes such that
         flowDict[u][v] is the flow edge (u, v).
+    iterations : int
+        Number of pivot iterations performed by the network simplex algorithm.
 
     Raises
     ------
@@ -189,11 +191,14 @@ def min_cost_flow(G, demand="demand", capacity="capacity", weight="weight", max_
     >>> G.add_edge("a", "c", weight=6, capacity=10)
     >>> G.add_edge("b", "d", weight=1, capacity=9)
     >>> G.add_edge("c", "d", weight=2, capacity=5)
-    >>> flowDict = nx.min_cost_flow(G)
+    >>> flowDict, iterations = nx.min_cost_flow(G)
     >>> flowDict
     {'a': {'b': 4, 'c': 1}, 'd': {}, 'b': {'d': 4}, 'c': {'d': 1}}
+    >>> iterations
+    1
     """
-    return nx.network_simplex(G, demand=demand, capacity=capacity, weight=weight, max_iter=max_iter)[1]
+    _, flow_dict, iterations = nx.network_simplex(G, demand=demand, capacity=capacity, weight=weight, max_iter=max_iter)
+    return flow_dict, iterations
 
 
 @nx._dispatchable(edge_attrs={"weight": 0})
